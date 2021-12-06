@@ -1,10 +1,80 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div v-if="hasClickOnOK">
+    <div id="nav">
+      <router-link to="/">Le Quiz</router-link>
+      <router-link to="/about">Voir les erreurs</router-link>
+    </div>
+    <router-view />
   </div>
-  <router-view/>
+  <div v-else>
+    <div>
+      <h1>Quiz sur les drapeaux des pays du monde</h1>
+      <div>
+        Ce projet a été développé à des fins d'entrainement afin d'alimenter mon
+        portfolio.
+        <br />
+        Le framework VueJS est utilisé avec les dépendances Axios, Vue Router et
+        VueX.
+        <br />
+        Les données proviennent de l'API REST Countries.
+        <br />
+        <br />
+        Vous pouvez retrouver l'ensemble de mes projets
+        <a href="https://github.com/KevinArnaudLille" target="_blank"
+          >ici sur GitHub</a
+        >.
+        <br />
+        <br />
+        <p>Kevin Arnaud - 2021</p>
+      </div>
+    </div>
+    <button @click="letsGo">C'est parti!</button>
+  </div>
 </template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      dataPays: [],
+      hasClickOnOK: false,
+      listTotaleNomPays: [],
+    };
+  },
+  methods: {
+    letsGo() {
+      this.hasClickOnOK = true;
+      axios.get("https://restcountries.com/v3.1/all").then((reponse) => {
+        // Construction du dictionnaire de pays avec des data réduites
+        this.dataPays = [];
+        for (let element of reponse.data) {
+          this.dataPays.push({
+            nom: element["translations"]["fra"]["common"],
+            population: element["population"],
+            continentEn: element["continents"],
+            superficie: element["area"],
+            lienDrapeau: element["flags"]["png"],
+            lienMaps: element["maps"]["googleMaps"],
+          });
+        }
+        for (let pays of this.dataPays) {
+          this.listTotaleNomPays.push(pays.nom);
+        }
+        // Pour stocker dans les données dans le store VueX
+        this.$store.commit(
+          "setDataPaysVuexValue",
+          this.dataPays,
+          this.listTotaleNomPays
+        );
+        this.$store.commit("setTotalNomPaysValue", this.listTotaleNomPays);
+      });
+    },
+  },
+};
+</script>
+
 
 <style>
 #app {
@@ -13,15 +83,35 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app::before {
+  content: "";
+  background-image: url("./assets/world-map.jpg");
+  z-index: -1;
+  background-size: cover;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.4;
 }
 
 #nav {
-  padding: 30px;
+  padding: 0px;
 }
 
 #nav a {
   font-weight: bold;
   color: #2c3e50;
+  padding: 10px;
 }
 
 #nav a.router-link-exact-active {
