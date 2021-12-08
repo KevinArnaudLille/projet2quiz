@@ -1,24 +1,33 @@
 <template>
   <div class="home">
-    <div id="choixCategorie" v-if="!(startQuestion && lireIsModeSelected)">
-      <p id="chooseCat">Choisir une catégorie :</p>
-      <button id="worldBtn" @click="hasSelectedMode('world')">Monde</button
-      ><br />
-      <button
-        class="continentsBtn"
-        v-for="(continent, index) in continents"
-        :key="index"
-        @click="hasSelectedMode(continent[0])"
-      >
-        {{ continent[1] }}
-      </button>
+    <div v-if="noMorePays">
+      <p id="ending">Vous êtes arrivé au bout !</p>
+      Le score final est de {{ lireResultat[0] }} sur {{ lireResultat[2] }}.
+      <br><br>
+      <button id="resetBtn" @click="activeReset">Recommencer</button>
     </div>
-    <div v-else><br>
-      <div id="score">
-        Le score est de {{ lireResultat[0] }} sur {{ lireResultat[2] }}
-        <button id="resetBtn" @click="activeReset">Recommencer</button>
+    <div v-else>
+      <div id="choixCategorie" v-if="!(startQuestion && lireIsModeSelected)">
+        <p id="chooseCat">Choisir une catégorie :</p>
+        <button id="worldBtn" @click="hasSelectedMode('world')">Monde</button
+        ><br />
+        <button
+          class="continentsBtn"
+          v-for="(continent, index) in continents"
+          :key="index"
+          @click="hasSelectedMode(continent[0])"
+        >
+          {{ continent[1] }}
+        </button>
       </div>
-      <Question v-if="startQuestion" :randomPaysReceived="randomPays" />
+      <div v-else>
+        <br />
+        <div id="score">
+          Le score est de {{ lireResultat[0] }} sur {{ lireResultat[2] }}
+          <button id="resetBtn" @click="activeReset">Recommencer</button>
+        </div>
+        <Question v-if="startQuestion" :randomPaysReceived="randomPays" />
+      </div>
     </div>
   </div>
 </template>
@@ -44,12 +53,13 @@ export default {
         ["Oceania", "Océanie"],
         ["South America", "Amérique du Sud"],
       ],
+      noMorePays: false,
     };
   },
   beforeRouteEnter: (to, from, next) => {
     if (from.fullPath === "/about") {
       next((vm) => {
-        vm.randomPays=vm.lireCurrentPays;
+        vm.randomPays = vm.lireCurrentPays;
         vm.startQuestion = true;
       });
     } else {
@@ -57,8 +67,8 @@ export default {
     }
   },
   computed: {
-    lireCurrentPays(){
-return this.$store.state.currentPays;
+    lireCurrentPays() {
+      return this.$store.state.currentPays;
     },
     lirePaysRestant() {
       return this.$store.state.listNomPaysRestant;
@@ -80,6 +90,10 @@ return this.$store.state.currentPays;
       this.$store.commit("setCurrentPays", this.randomPays);
       this.$store.commit("removeUsedPays", this.randomPays);
       this.startQuestion = true;
+      let listRestant = this.lirePaysRestant;
+      if (listRestant.length === 0) {
+        this.noMorePays = true;
+      }
     },
     hasSelectedMode(mode) {
       let dataToKeep = [];
@@ -94,10 +108,10 @@ return this.$store.state.currentPays;
       this.generateRandomPays();
       this.$store.commit("modeIsChanged");
     },
-    activeReset(){
-      console.log("reset");
+    activeReset() {
       this.$store.commit("modeIsChanged");
       this.$store.commit("reset");
+      this.noMorePays = false;
     },
   },
 };
@@ -137,8 +151,13 @@ return this.$store.state.currentPays;
   font-style: italic;
 }
 
-#resetBtn{
+#resetBtn {
   margin-left: 10px;
   font-size: 1rem;
+}
+
+#ending{
+  font-size: 3rem;
+  font-weight: bolder;
 }
 </style>
