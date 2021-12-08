@@ -9,7 +9,7 @@
   <div v-else>
     <div>
       <h1>Quiz sur les drapeaux des pays du monde</h1>
-      <div>
+      <div id="welcomeMsg">
         Ce projet a été développé à des fins d'entrainement afin d'alimenter mon
         portfolio.
         <br />
@@ -24,11 +24,10 @@
           >ici sur GitHub</a
         >.
         <br />
-        <br />
-        <p>Kevin Arnaud - 2021</p>
+        <p id="authorName">Kevin Arnaud - 2021</p>
       </div>
     </div>
-    <button @click="letsGo">C'est parti!</button>
+    <button @click="letsGo" id="goBtn">C'est parti!</button>
   </div>
 </template>
 
@@ -89,6 +88,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 100%;
 }
 
 #app::before {
@@ -104,6 +104,14 @@ export default {
   opacity: 0.4;
 }
 
+h1{
+  font-size: 2.2rem;
+}
+
+#welcomeMsg{
+  font-size: 1.2rem;
+}
+
 #nav {
   padding: 0px;
 }
@@ -117,4 +125,20 @@ export default {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
+#authorName{
+font-size: 1rem;
+font-style: italic; 
+}
+
+#goBtn{
+  font-size: 1.3rem;
+  padding: 3px;
+}
+
+#goBtn:hover{
+  color: white;
+  background-color: #42b983;
+}
 </style>
+

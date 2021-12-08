@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="cadrePays" v-for="(pays,index) in lireResultat[4]" :key="index">
-      <span>{{pays.nom}} : </span>
+      <span class="idPays">{{pays.nom}} : </span>
       <img class="draps" :src="pays.lienDrapeau" alt="drapeau">
     </div>
   </div>
@@ -36,8 +36,13 @@ export default {
    align-items: center;
    padding: 10px;
 }
+
+.idPays{
+  font-size: 1.1rem;
+}
+
 .draps {
-  width: 120px;
+  width: 150px;
   margin: 0px;
 }
 </style>

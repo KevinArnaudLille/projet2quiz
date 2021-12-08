@@ -5,9 +5,11 @@ export default createStore({
     dataPaysVuex: [],
     listTotaleNomPaysVuex: [],
     listNomPaysRestant: [],
+    currentPays:"",
     resultat: [0, 0, 0, [], []],
     // resultat => [Bonne, mauvaise, total,[pays trouvés],[pays échoués]]
-    isModeSelected: false
+    isModeSelected: false,
+    // RAJOUTER VARIABLE DE STOCKAGE DE LETAT QUAND ON RETOURNE A LA QUESTION DEPUIS LECRAN SCORE
   },
   getters: {
   },
@@ -25,6 +27,9 @@ export default createStore({
     setListPays(state,listPays){
       state.listNomPaysRestant=listPays
     },
+    setCurrentPays(state,pays){
+      state.currentPays = pays;
+    },
     addResult(state, result) {
       if (result === 1) {
         state.resultat[0]++;
@@ -40,10 +45,12 @@ export default createStore({
     addPaysFail(state, pays){
       state.resultat[4].push(pays);
     },
-    modeIsChanged(state, value) {
-      if (value === 1) {
-        state.isModeSelected = true;
-      }
+    modeIsChanged(state) {
+        state.isModeSelected = !state.isModeSelected;
+    },
+    reset(state){
+      state.resultat=[0, 0, 0, [], []];
+      state.listNomPaysRestant = state.listTotaleNomPaysVuex;
     }
   },
   actions: {

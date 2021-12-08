@@ -1,9 +1,11 @@
 <template>
   <div class="home">
     <div id="choixCategorie" v-if="!(startQuestion && lireIsModeSelected)">
-      <p>Choisir une catégorie :</p>
-      <button @click="hasSelectedMode('world')">Monde</button><br />
+      <p id="chooseCat">Choisir une catégorie :</p>
+      <button id="worldBtn" @click="hasSelectedMode('world')">Monde</button
+      ><br />
       <button
+        class="continentsBtn"
         v-for="(continent, index) in continents"
         :key="index"
         @click="hasSelectedMode(continent[0])"
@@ -11,9 +13,10 @@
         {{ continent[1] }}
       </button>
     </div>
-    <div v-else>
-      <div>
-        Ton score est de {{ lireResultat[0] }} sur {{ lireResultat[2] }}
+    <div v-else><br>
+      <div id="score">
+        Le score est de {{ lireResultat[0] }} sur {{ lireResultat[2] }}
+        <button id="resetBtn" @click="activeReset">Recommencer</button>
       </div>
       <Question v-if="startQuestion" :randomPaysReceived="randomPays" />
     </div>
@@ -46,13 +49,17 @@ export default {
   beforeRouteEnter: (to, from, next) => {
     if (from.fullPath === "/about") {
       next((vm) => {
-        vm.generateRandomPays();
+        vm.randomPays=vm.lireCurrentPays;
+        vm.startQuestion = true;
       });
     } else {
       next();
     }
   },
   computed: {
+    lireCurrentPays(){
+return this.$store.state.currentPays;
+    },
     lirePaysRestant() {
       return this.$store.state.listNomPaysRestant;
     },
@@ -70,6 +77,7 @@ export default {
     generateRandomPays() {
       let listTotal = this.lirePaysRestant;
       this.randomPays = listTotal[Math.floor(Math.random() * listTotal.length)];
+      this.$store.commit("setCurrentPays", this.randomPays);
       this.$store.commit("removeUsedPays", this.randomPays);
       this.startQuestion = true;
     },
@@ -84,8 +92,53 @@ export default {
       }
 
       this.generateRandomPays();
-      this.$store.commit("modeIsChanged", 1);
+      this.$store.commit("modeIsChanged");
+    },
+    activeReset(){
+      console.log("reset");
+      this.$store.commit("modeIsChanged");
+      this.$store.commit("reset");
     },
   },
 };
 </script>
+
+<style>
+#chooseCat {
+  font-size: 1.5rem;
+}
+
+#worldBtn {
+  font-size: 1.5rem;
+  padding: 5px;
+  border-radius: 2px;
+  margin: 5px;
+  font-weight: bold;
+}
+
+.continentsBtn {
+  font-size: 1.2rem;
+  padding: 4px;
+  border-radius: 2px;
+  margin: 4px;
+}
+
+.continentsBtn:hover,
+#worldBtn:hover {
+  color: white;
+  background-color: #2c3e50;
+}
+
+#score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  font-style: italic;
+}
+
+#resetBtn{
+  margin-left: 10px;
+  font-size: 1rem;
+}
+</style>

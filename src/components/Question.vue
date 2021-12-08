@@ -1,5 +1,5 @@
 <template>
-  <h1>{{ randomPaysReceived }} ?</h1>
+  <h1 id="paysName">{{ randomPaysReceived }} ?</h1>
   <div id="boiteChoixDraps">
     <div v-for="(lienDrap, index) in drapPaysQuestions" :key="index">
       <img
@@ -105,6 +105,21 @@ export default {
   height: 100px;
   margin: 20px;
 }
+
+@keyframes drapHover {
+  from{transform: rotate(0deg);}
+  33%{transform: rotate(3deg);}
+  55%{transform: rotate(-2deg);}
+  90%{transform: rotate(1deg);}
+  to{transform: rotate(0deg);}
+}
+
+.propositionsDraps:hover{
+animation: 0.2s drapHover;
+height: 96px;
+border: 2px solid #2c3e50;
+}
+
 #boiteChoixDraps {
   display: flex;
   flex-direction: row;
